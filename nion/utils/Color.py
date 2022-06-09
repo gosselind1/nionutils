@@ -25,7 +25,7 @@ class Color:
         components = 0, 0, 0, 0  # Black with no transparency
         color = color.lower()
 
-        color = Color.__NAME_COLOR_TABLE.get(color, color)
+        color = Color.__NAME_TO_COLOR_TABLE.get(color, color)
 
         if color[0] == "#":
             try:
@@ -161,7 +161,7 @@ class Color:
         return (1 - p) * a + p * b
 
     # per CSS spec
-    __NAME_COLOR_TABLE = {"aliceblue": "#f0f8ff",
+    __NAME_TO_COLOR_TABLE = {"aliceblue": "#f0f8ff",
                           "antiquewhite": "#faebd7",
                           "aqua": "#00ffff",
                           "aquamarine": "#7fffd4",
@@ -311,4 +311,4 @@ class Color:
                           "yellowgreen": "#9acd32",
                           "transparent": "#00000000"}
 
-    __COLOR_NAME_TABLE = {v: k for k, v in __NAME_COLOR_TABLE.items()}
+    __COLOR_TO_NAME_TABLE = {v: k for k, v in __NAME_TO_COLOR_TABLE.items()}
