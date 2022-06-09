@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 from math import ceil
 
@@ -9,7 +11,7 @@ class Color:
     implementation targets these formats.
     """
 
-    def __init__(self, color: str):
+    def __init__(self, color: str) -> None:
         self.r, self.g, self.b, self.a = Color.__resolve_color(color)
 
     @staticmethod
@@ -58,12 +60,12 @@ class Color:
         if len(color) == 6:
             color = "00" + color
 
-        color = [int(color[i:i + 1], 16) for i in range(0, len(color), 2)]
-
-        if len(color) != 4:
+        components = tuple(int(color[i:i + 1], 16) for i in range(0, len(color), 2))
+        if len(components) != 4:
             raise ValueError("{} is not a valid length".format(color_string))
+        components = typing.cast(typing.Tuple[int, int, int, int], components)
 
-        return tuple(*color)
+        return components
 
     @staticmethod
     def __rgb_to_components(color: str) -> typing.Tuple[int, int, int, int]:
@@ -104,9 +106,11 @@ class Color:
         if not all(is_percent == (parameter[-1] == "%") for parameter in parameters[:len_parameters]):
             raise ValueError("Values are not type synced")
 
-        color = map(Color.__rgb_value_to_eight_bit, parameters)
+        components = tuple(map(Color.__rgb_value_to_eight_bit, parameters))
+        assert len(components) == 4
+        components = typing.cast(typing.Tuple[int, int, int, int], components)
 
-        return tuple(*color)
+        return components
 
     @staticmethod
     def __legacy_parameters_to_modern(legacy_params: str) -> str:
@@ -135,15 +139,15 @@ class Color:
         percent = value[-1] == "%"
         if percent:
             value = value[:-1]
-        value = float(value)
+        float_value = float(value)
         if percent:
-            value = Color.__css_percent_interpolation(percent, MIN, MAX)
+            float_value = Color.__css_percent_interpolation(percent, MIN, MAX)
 
-        value = int(ceil(value))
-        value = min(MAX, value)
-        value = max(MIN, value)
+        int_value = int(ceil(float_value))
+        int_value = min(MAX, int_value)
+        int_value = max(MIN, int_value)
 
-        return value
+        return int_value
 
     @staticmethod
     def __css_percent_interpolation(p: float, a: float, b: float) -> float:
@@ -307,4 +311,4 @@ class Color:
                           "yellowgreen": "#9acd32",
                           "transparent": "#00000000"}
 
-    __COLOR_NAME_TABLE = {v: k for k, v in __NAME_COLOR_TABLE}
+    __COLOR_NAME_TABLE = {v: k for k, v in __NAME_COLOR_TABLE.items()}
