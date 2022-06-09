@@ -12,6 +12,11 @@ class Color:
     """
 
     def __init__(self, color: str) -> None:
+        """Initializes a new color object.
+        If the given color is invalid, black will be used instead.
+
+        :param str color: A valid CSS color
+        """
         self.r, self.g, self.b, self.a = Color.__resolve_color(color)
 
     @staticmethod
@@ -22,7 +27,7 @@ class Color:
         :param str color:  A string (hopefully) containing a valid color format
         :return: A tuple of four digits representing r, g, b, and a respectively, each in the range of 0-255
         """
-        components = 0, 0, 0, 0  # Black with no transparency
+        components = 0, 0, 0, 255  # Black with no transparency
         color = color.lower()
 
         color = Color.__NAME_TO_COLOR_TABLE.get(color, color)
