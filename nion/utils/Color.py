@@ -81,8 +81,10 @@ class Color:
         :raise ValueError: The provided input is a not a valid hex color
         """
 
-        color = color.replace("rgba(", "", 1)  # rgba is a legacy function, and operates identically to rgb
-        color = color.replace("rgb(", "", 1)
+        if color[3] == "a":
+            color = color.replace("rgba(", "", 1)  # rgba is a legacy function, and operates identically to rgb
+        else:
+            color = color.replace("rgb(", "", 1)
         color = color[:-1]
 
         if "," in color:
