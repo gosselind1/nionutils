@@ -6,8 +6,14 @@ import re
 
 
 class Color:
+    """This class aims to solve the current usage of strings as a color within Swift.
+    It simplifies storage and conversion to enable easy comparisons and other color related operations rather than
+    needing to manually deal with strings every time a color is utilized.
+    Colors are explicitly based around CSS colors: https://www.w3.org/TR/css-color-4/.
+    Internally, swift currently utilizes: <hex-color>, <named-color>, <rgb()> and <rgba()>. Therefore this initial
+    implementation targets those formats.
+    """
 
-    # Refer to https://www.w3.org/TR/css-color-4/#color-syntax for full list of potential valid functions
     __SUPPORTED_FUNCTIONS = {"rgb", "rgba"}
     __SUPPORTED_TYPES = {"hex-color", "named-color", "transparent", "rgb", "rgba"}
     __FUNCTION_PATTERN = re.compile(r".+?(.*)$")
@@ -60,6 +66,11 @@ class Color:
     __COLOR_TO_NAME_TABLE = {v: k for k, v in __NAME_TO_COLOR_TABLE.items()}
 
     def __init__(self, color: str) -> None:
+        """Initializes a new color object.
+        If the given color is invalid, black will be used instead.
+
+        :param str color: A valid CSS color
+        """
         self.__stored_color: str = color
         self.__color_type: typing.Optional[str] = None
         self.__color_parameters: typing.Optional[str] = None
@@ -68,10 +79,19 @@ class Color:
 
     @property
     def stored_color(self) -> str:
+        """Retrieves the originally stored color in the object.
+        This property is read-only by design.
+
+        :return: A string of the original inputted color
+        """
         return self.__stored_color
 
     @property
     def color_type(self) -> str:
+        """Retrieves the CSS color type of the input color.
+
+        :return: A string of the color type, or "unknown" if the color type is unsupported
+        """
         if self.__color_type:
             return self.__color_type
 
@@ -93,6 +113,10 @@ class Color:
 
     @property
     def is_function(self) -> bool:
+        """States if the input color is a function.
+
+        :return: A bool of whether the input color looks like a CSS color function.
+        """
         if self.__is_function:
             return self.__is_function
 
@@ -102,6 +126,11 @@ class Color:
 
     @property
     def color_parameters(self) -> str:
+        """Retrieves the parameters of the input color.
+        If the color is not a function color, it will always return an empty string.
+
+        :return: A string of the input color's function parameters, if applicable.
+        """
         if self.__color_parameters:
             return self.__color_parameters
 
@@ -116,9 +145,10 @@ class Color:
 
     @property
     def is_valid(self) -> bool:
-        # to check if the given color is valid, we verify that:
-        # 1. The color is a recognized type
-        # 2. If the color is a function, if the parameters look okay(ish)
+        """States whether the input color is a valid color. That is, is it a proper CSS statement.
+
+        :return: A bool of whether the input color string appears valid.
+        """
         if self.__is_valid:
             return self.__is_valid
 
@@ -134,6 +164,12 @@ class Color:
         return self.__is_valid
 
     def __validate_hex_color(self) -> bool:
+        """Determines if the saved color is a valid hex color.
+        This function is intended to be called by __is_valid, where it has already been determined that the color this
+        function is operating on is in the format of a hex-color.
+
+        :return: A bool of whether the input color is a valid hex color,
+        """
         VALID_LENGTHS = {3, 4, 6, 8}
         color = self.stored_color[1:]
 
@@ -147,7 +183,13 @@ class Color:
             return False
 
     def __validate_function_parameters(self) -> bool:
-        VALIDATORS = {"rgb": Color.__validate_rgb_parameters,  # should be aligned with supported functions list
+        """This function should be called by is_valid. If a color is determined to be a css color function, this
+        function does some initial setup to have a specific function validator check if the color function is valid.
+
+        :return: A bool of whether the given function parameters appear to be valid.
+        :raise NotImplementedError: If the given color is an unimplemented function.
+        """
+        VALIDATORS = {"rgb": Color.__validate_rgb_parameters,
                       "rgba": Color.__validate_rgb_parameters}
 
         parameters = self.color_parameters
@@ -162,16 +204,20 @@ class Color:
         return VALIDATORS[self.color_type](self)
 
     def __validate_rgb_parameters(self) -> bool:
+        """If a color is determined the be of the rgb/rgba type, this function determines if the function parameters are
+        valid. This should be called by __validate_function_parameters.
+
+        :return: A bool of whether the rgb/rgba function signature is correct
+        """
         parameters = [parameter for parameter in self.color_parameters if len(parameter)]
         len_parameters = len(parameters)
 
         if len_parameters < 3:
-            return False  # Too little arguments
+            return False
         elif len_parameters == 3:
-            parameters += "255"  # Expand shortened notation to have alpha
+            parameters += "255"
         elif len_parameters == 5:
-            if parameters[3] == "/":  # Denotes independent type for alpha
-                check_alpha = False
+            if parameters[3] == "/":
                 len_parameters -= 2
                 del parameters[3]
             else:
@@ -183,6 +229,12 @@ class Color:
         return all(is_percent == (parameter[-1] == "%") for parameter in parameters[:len_parameters])
 
     def to_hex_color(self) -> Color:
+        """Converts a given color to an equivalent or close to equivalent color in the hex-color format.
+        Depending on the format, some lossy conversion might occur.
+
+        :return: A new Color object containing a copy of the original color as a hex-color
+        :raise NotImplementedError: If the color object type is unable to be converted to hex.
+        """
         HEX_CONVERTERS = {"hex-color": Color.__hex_color_to_hex,
                           "named-color": Color.__named_color_to_hex,
                           "transparent": Color.__transparent_to_hex,
@@ -194,16 +246,33 @@ class Color:
         return HEX_CONVERTERS[self.color_type](self)
 
     def __hex_color_to_hex(self) -> Color:
+        """Converts a hex color to a hex color. Intended to be called by to_hex_color.
+
+        :return: A new hex color based on the calling color.
+        """
         return Color(self.stored_color)
 
     def __named_color_to_hex(self) -> Color:
+        """Converts a named color to a hex color. Intended to be called by to_hex_color.
+
+        :return: A new hex color based on the calling named color.
+        """
         hex_color = self.__NAME_TO_COLOR_TABLE[self.stored_color.lower()]
         return Color(hex_color)
 
     def __transparent_to_hex(self) -> Color:
+        """Converts a transparent color to a hex color. Intended to be called by to_hex_color.
+
+        :return: A new color object with the color of "#00000000"
+        """
         return Color("#00000000")
 
     def __rgb_to_hex(self) -> Color:
+        """Converts a rgb(a) color to a hex color. Intended to be called by to_hex_color.
+
+        :return: A new hex color based on the calling color.
+        :raise NotImplementedError: If the rgb(a) color cannot be converted to hex.
+        """
         if not self.is_valid:
             raise ValueError("Cannot convert invalid rgb color to hex")
 
@@ -221,6 +290,12 @@ class Color:
         return Color(hex_color)
 
     def to_expanded_notation(self) -> Color:
+        """For any valid color, this function produces a copy of that color expressed in the largest possible notation.
+
+        :return: A new color object representing the calling color in expanded notation.
+        :raise NotImplementedError: If the color-type cannot be expanded.
+        :raise ValueError: If the color is not valid.
+        """
         EXPANDERS = {"hex-color": Color.__hex_color_expander,
                      "rgb": Color.__rgb_color_expander,
                      "rgba": Color.__rgb_color_expander}
@@ -232,6 +307,11 @@ class Color:
         return EXPANDERS[self.color_type](self)
 
     def __hex_color_expander(self) -> Color:
+        """Given a color object that is assumed to be a hex-color, this returns a new color object of the extended 9
+        character format. This should be called from to_expanded_notation
+
+        :return: A new color object based on the original color object, in extended form.
+        """
         color = self.stored_color[1:]
 
         if len(color) == 3:
@@ -245,6 +325,11 @@ class Color:
         return Color(color)
 
     def __rgb_color_expander(self) -> Color:
+        """Given a color object that is assumed to be a rgb(a) color, this returns a new color object of the extended
+        rgb(a) function call. This applies to both legacy and modern syntax.
+
+        :return: A new color object based on the original color object, in extended form.
+        """
         color = self.color_parameters
         is_legacy = "," in color
         if is_legacy:
@@ -268,6 +353,7 @@ class Color:
     @staticmethod
     def __legacy_parameters_to_modern(legacy_params: str) -> str:
         """Converts a CSS legacy style function call to the syntax of a modern css call.
+
         :param legacy_params: A string containing the inner parameters of a CSS function, ex: "33, 33, 33"
         :return: A string in the modern css function call, ex: "33 33 33"
         :raise ValueError: The provided syntax is invalid, ex: 33,,,33,33
@@ -280,6 +366,7 @@ class Color:
     @staticmethod
     def __rgb_color_value_to_eight_bit(value: str) -> int:
         """Converts a css number or percent as string to a bounded unsigned 8bit integer.
+
         :param value: Value to convert.
         :return: An integer being in the range of 0 to 255.
         :raise ValueError: The provided value is not a valid CSS number or percent.
@@ -303,6 +390,7 @@ class Color:
     @staticmethod
     def __css_percent_interpolation(p: float, a: float, b: float) -> float:
         """Given a percentage, p, as a value 0 to 1, this function returns a value p% away from a in the direction of b
+
         :param p: A floating point value as a percent where 1 is 100% and 0 is 0%
         :param a: A floating point value
         :param b: A floating point value
