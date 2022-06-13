@@ -57,14 +57,14 @@ class Color:
                              "thistle": "#d8bfd8", "tomato": "#ff6347", "turquoise": "#40e0d0", "violet": "#ee82ee",
                              "wheat": "#f5deb3", "white": "#ffffff", "whitesmoke": "#f5f5f5", "yellow": "#ffff00",
                              "yellowgreen": "#9acd32"}
-    __COLOR_TO_NAME_TABLE = {v: k for k, v in __NAME_TO_COLOR_TABLE}
+    __COLOR_TO_NAME_TABLE = {v: k for k, v in __NAME_TO_COLOR_TABLE.items()}
 
     def __init__(self, color: str) -> None:
-        self.__stored_color = color
-        self.__color_type = None
-        self.__color_parameters = None
-        self.__is_function = None
-        self.__is_valid = None
+        self.__stored_color: str = color
+        self.__color_type: typing.Optional[str] = None
+        self.__color_parameters: typing.Optional[str] = None
+        self.__is_function: typing.Optional[bool] = None
+        self.__is_valid:typing.Optional[bool] = None
 
     @property
     def stored_color(self) -> str:
@@ -92,14 +92,13 @@ class Color:
         return self.__color_type
 
     @property
-    def is_function(self) -> str:
+    def is_function(self) -> bool:
         if self.__is_function:
             return self.__is_function
 
         color = self.stored_color
         self.__is_function = self.__FUNCTION_PATTERN.fullmatch(color) is not None
         return self.is_function
-
 
     @property
     def color_parameters(self) -> str:
@@ -129,7 +128,7 @@ class Color:
             self.__is_valid = self.__validate_function_parameters()
         elif self.color_type == "hex-color":
             self.__is_valid = self.__validate_hex_color()
-        else:  # Transparent and named colors get a pass as we determine they valid during type checking
+        else:  # Transparent and named colors get a pass as we determine they are valid during type checking
             self.__is_valid = True
 
         return self.__is_valid
@@ -160,17 +159,16 @@ class Color:
 
         if self.color_type not in VALIDATORS:
             raise NotImplementedError("{} parameter validation not implemented".format(self.color_type))
-        VALIDATORS[self.color_type](self)
+        return VALIDATORS[self.color_type](self)
 
     def __validate_rgb_parameters(self) -> bool:
         parameters = [parameter for parameter in self.color_parameters if len(parameter)]
-        check_alpha = True
         len_parameters = len(parameters)
 
         if len_parameters < 3:
             return False  # Too little arguments
         elif len_parameters == 3:
-            parameters += "100"  # Expand shortened notation to have alpha
+            parameters += "255"  # Expand shortened notation to have alpha
         elif len_parameters == 5:
             if parameters[3] == "/":  # Denotes independent type for alpha
                 check_alpha = False
@@ -184,7 +182,7 @@ class Color:
         is_percent = parameters[0][-1] == "%"  # check if types are synced
         return all(is_percent == (parameter[-1] == "%") for parameter in parameters[:len_parameters])
 
-    def to_hex_color(self):
+    def to_hex_color(self) -> Color:
         HEX_CONVERTERS = {"hex-color": Color.__hex_color_to_hex,
                           "named-color": Color.__named_color_to_hex,
                           "transparent": Color.__transparent_to_hex,
@@ -193,7 +191,7 @@ class Color:
 
         if self.color_type not in HEX_CONVERTERS:
             raise NotImplementedError("Hex conversion not implemented for {}".format(self.color_type))
-        HEX_CONVERTERS[self.color_type](self)
+        return HEX_CONVERTERS[self.color_type](self)
 
     def __hex_color_to_hex(self) -> Color:
         return Color(self.stored_color)
@@ -216,13 +214,13 @@ class Color:
         split_parameters = [parameter for parameter in parameters.split(" ") if len(parameter) > 0]
         if split_parameters[3] == "/":
             del split_parameters[3]
-        split_parameters = map(Color.__rgb_color_value_to_eight_bit, split_parameters)
-        split_parameters = map(lambda p: hex(p)[2:], split_parameters)
+        int_parameters = map(Color.__rgb_color_value_to_eight_bit, split_parameters)
+        hex_parameters = map(lambda p: hex(p)[2:], int_parameters)
 
-        hex_color = "#" + "".join(split_parameters)
+        hex_color = "#" + "".join(hex_parameters)
         return Color(hex_color)
 
-    def to_expanded_notation(self):
+    def to_expanded_notation(self) -> Color:
         EXPANDERS = {"hex-color": Color.__hex_color_expander,
                      "rgb": Color.__rgb_color_expander,
                      "rgba": Color.__rgb_color_expander}
@@ -231,7 +229,7 @@ class Color:
             raise ValueError("Notation expansion cannot occur on invalid colors")
         if self.color_type not in EXPANDERS:
             raise NotImplementedError("Notation expansion cannot be performed on {}".format(self.color_type))
-        EXPANDERS[self.color_type](self)
+        return EXPANDERS[self.color_type](self)
 
     def __hex_color_expander(self) -> Color:
         color = self.stored_color[1:]
@@ -254,7 +252,7 @@ class Color:
         parameters = [parameter for parameter in color.split(" ") if len(parameter)]
 
         if len(parameters) == 3:
-            parameters.append("100")
+            parameters.append("255")
         if len(parameters) == 4:
             parameters.insert(3, "/")
 
@@ -292,15 +290,15 @@ class Color:
         percent = value[-1] == "%"
         if percent:
             value = value[:-1]
-        value = float(value)
+        float_value = float(value)
         if percent:
-            value = Color.__css_percent_interpolation(percent, MIN, MAX)
+            float_value = Color.__css_percent_interpolation(float_value, MIN, MAX)
 
-        value = int(ceil(value))
-        value = min(MAX, value)
-        value = max(MIN, value)
+        int_value = int(ceil(float_value))
+        int_value = min(MAX, int_value)
+        int_value = max(MIN, int_value)
 
-        return value
+        return int_value
 
     @staticmethod
     def __css_percent_interpolation(p: float, a: float, b: float) -> float:
