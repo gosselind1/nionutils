@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import typing
-from math import ceil
 import re
 
 
@@ -350,6 +349,92 @@ class Color:
         color = self.color_type + "(" + color + ")"
         return Color(color)
 
+    def without_alpha(self) -> Color:
+        """Returns a new copy of the color, without any transparency
+
+        :return: A new Color based on the calling color, without alpha.
+        :raise NotImplementedError: If it is not possible to remove alpha while preserving the color format.
+        :raise ValueError: If the color is not valid.
+        """
+        ALPHA_REMOVERS = {"hex-color": Color.__hex_without_alpha,
+                          "named-color": Color.stored_color,
+                          "rgb": Color.__rgb_without_alpha,
+                          "rgba": Color.__rgb_without_alpha}
+
+        if not self.is_valid:
+            raise ValueError("{} is not a valid color".format(self.stored_color))
+        if self.color_type not in ALPHA_REMOVERS:
+            raise NotImplementedError("Alpha removal cannot be performed on {}".format(self.color_type))
+        ALPHA_REMOVERS[self.color_type](self)
+
+    def __hex_without_alpha(self) -> Color:
+        """Removes the transparency from a hex-color format color. Should be called from without_alpha.
+        This function keeps the output format the same length as the input format.
+
+        :return: A new color based on the calling color, without alpha.
+        """
+        color = self.stored_color
+        if len(color) == 5:
+            color = color[:-1] + "F"
+        elif len(color) == 9:
+            color = color[:-2] + "FF"
+        return Color(color)
+
+    def __rgb_without_alpha(self) -> Color:
+        """Removes the transparency from a hex-color format color. Should be called from without_alpha.
+        This function keeps the output format the same length as the input format.
+
+        :return: A new color based on the calling color, without alpha.
+        """
+        params = self.color_parameters
+        is_legacy = "," in params
+        if is_legacy:
+            params = Color.__legacy_parameters_to_modern(params)
+
+        split_params = params.split(" ")
+        if len(split_params) > 3:
+            target_position = len(split_params) - 1
+            if split_params[target_position][-1] == "%":
+                split_params[target_position] = "100%"
+            else:
+                split_params[target_position] = "255"
+
+        if is_legacy:
+            params = ", ".join(split_params)
+        else:
+            params = " ".join(split_params)
+
+        return Color(self.__color_type + "(" + params + ")")
+
+    def __str__(self) -> str:
+        """Gives a string representation of the color object.
+        This gives the stored_color value, or the original input color string, as a string.
+
+        :return: A str of the input color.
+        """
+        return str(self.stored_color)
+
+    def __repr__(self) -> str:
+        """Gives a representation of the color object.
+        This gives the representation of the original input color string.
+
+        :return: A str representation of the input color.
+        """
+        return repr(self.stored_color)
+
+    def __eq__(self, other: Color) -> bool:
+        """Compares two color objects for equality. This is accomplished by converting the colors to hex format,
+        and then checking if the colors match. This means for lossless values, there are some overlapping colors due to
+        rounding.
+
+        :return: A bool of whether these colors are a "Close enough" match
+        :raise ValueError: If a color is invalid, or improperly formed.
+        :raise NotImplementedError: If a color cannot be converted and or expanded.
+        """
+        color_a = self.to_hex_color().to_expanded_notation()
+        color_b = other.to_hex_color().to_expanded_notation()
+        return color_a.stored_color == color_b.stored_color
+
     @staticmethod
     def __legacy_parameters_to_modern(legacy_params: str) -> str:
         """Converts a CSS legacy style function call to the syntax of a modern css call.
@@ -381,7 +466,7 @@ class Color:
         if percent:
             float_value = Color.__css_percent_interpolation(float_value, MIN, MAX)
 
-        int_value = int(ceil(float_value))
+        int_value = int(round(float_value))
         int_value = min(MAX, int_value)
         int_value = max(MIN, int_value)
 
