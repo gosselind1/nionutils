@@ -356,8 +356,9 @@ class Color:
         :raise NotImplementedError: If it is not possible to remove alpha while preserving the color format.
         :raise ValueError: If the color is not valid.
         """
+        
         ALPHA_REMOVERS = {"hex-color": Color.__hex_without_alpha,
-                          "named-color": Color.stored_color,
+                          "named-color": lambda c: Color(c.stored_color),
                           "rgb": Color.__rgb_without_alpha,
                           "rgba": Color.__rgb_without_alpha}
 
@@ -365,7 +366,8 @@ class Color:
             raise ValueError("{} is not a valid color".format(self.stored_color))
         if self.color_type not in ALPHA_REMOVERS:
             raise NotImplementedError("Alpha removal cannot be performed on {}".format(self.color_type))
-        ALPHA_REMOVERS[self.color_type](self)
+
+        return ALPHA_REMOVERS[self.color_type](self)
 
     def __hex_without_alpha(self) -> Color:
         """Removes the transparency from a hex-color format color. Should be called from without_alpha.
@@ -404,7 +406,10 @@ class Color:
         else:
             params = " ".join(split_params)
 
-        return Color(self.__color_type + "(" + params + ")")
+        assert self.__color_type is not None
+        color = self.__color_type + "(" + params + ")"
+
+        return Color(color)
 
     def __str__(self) -> str:
         """Gives a string representation of the color object.
@@ -422,15 +427,19 @@ class Color:
         """
         return repr(self.stored_color)
 
-    def __eq__(self, other: Color) -> bool:
+    def __eq__(self, other: typing.Any) -> bool:
         """Compares two color objects for equality. This is accomplished by converting the colors to hex format,
         and then checking if the colors match. This means for lossless values, there are some overlapping colors due to
         rounding.
 
+        :param other: Another object to compare the color against.
         :return: A bool of whether these colors are a "Close enough" match
         :raise ValueError: If a color is invalid, or improperly formed.
         :raise NotImplementedError: If a color cannot be converted and or expanded.
         """
+        if not isinstance(other, Color):
+            return False
+
         color_a = self.to_hex_color().to_expanded_notation()
         color_b = other.to_hex_color().to_expanded_notation()
         return color_a.stored_color == color_b.stored_color
