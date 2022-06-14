@@ -125,7 +125,7 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color(sampling[i])
                 self.assertEqual(sampling[i], c.stored_color)
-                self.assertEqual(sampling[i], c.__stored_color)
+                self.assertEqual(sampling[i], c._Color__stored_color)
 
     def test_hex_color_type(self):
         hex_colors = [*HEX_COLORS, *INVALID_HEX_COLORS]
@@ -134,21 +134,21 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color(hex_colors[i])
                 self.assertEqual(c.color_type, "hex-color")
-                self.assertEqual(c.__color_type, "hex-color")
+                self.assertEqual(c._Color__color_type, "hex-color")
 
     def test_named_color_type(self):
         for i in range(len(NAMED_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color(NAMED_COLORS[i])
                 self.assertEqual(c.color_type, "named-color")
-                self.assertEqual(c.__color_type, "named-color")
+                self.assertEqual(c._Color__color_type, "named-color")
 
     def test_transparent_type(self):
         for i in range(len(TRANSPARENT_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color(TRANSPARENT_COLORS[i])
                 self.assertEqual(c.color_type, "transparent")
-                self.assertEqual(c.__color_type, "transparent")
+                self.assertEqual(c._Color__color_type, "transparent")
 
     def test_rgb_type(self):
         rgb_colors = [*MODERN_RGB_COLORS, *INVALID_MODERN_RGB_COLORS]
@@ -157,7 +157,7 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color("rgb"+rgb_colors[i])
                 self.assertEqual(c.color_type, "rgb()")
-                self.assertEqual(c.__color_type, "rgb()")
+                self.assertEqual(c._Color__color_type, "rgb()")
 
     def test_legacy_rgb_type(self):
         rgb_colors = [*LEGACY_RGB_COLORS, *INVALID_LEGACY_RGB_COLORS]
@@ -166,7 +166,7 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color("rgb" + rgb_colors[i])
                 self.assertEqual(c.color_type, "rgb()")
-                self.assertEqual(c.__color_type, "rgb()")
+                self.assertEqual(c._Color__color_type, "rgb()")
 
     def test_rgba_type(self):
         rgb_colors = [*MODERN_RGB_COLORS, *INVALID_MODERN_RGB_COLORS]
@@ -175,7 +175,7 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color("rgba" + rgb_colors[i])
                 self.assertEqual(c.color_type, "rgba()")
-                self.assertEqual(c.__color_type, "rgba()")
+                self.assertEqual(c._Color__color_type, "rgba()")
 
     def test_legacy_rgba_type(self):
         rgb_colors = [*LEGACY_RGB_COLORS, *INVALID_LEGACY_RGB_COLORS]
@@ -184,14 +184,14 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color("rgba" + rgb_colors[i])
                 self.assertEqual(c.color_type, "rgba()")
-                self.assertEqual(c.__color_type, "rgba()")
+                self.assertEqual(c._Color__color_type, "rgba()")
 
     def test_unknown_type(self):
         for i in range(len(INVALID_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color(INVALID_COLORS[i])
                 self.assertEqual(c.color_type, "unknown")
-                self.assertEqual(c.__color_type, "unknown")
+                self.assertEqual(c._Color__color_type, "unknown")
 
     def test_hex_color_params(self):
         hex_colors = [*HEX_COLORS, *INVALID_HEX_COLORS]
@@ -200,21 +200,21 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color(hex_colors[i])
                 self.assertEqual(c.color_parameters, "")
-                self.assertEqual(c.__color_parameters, "")
+                self.assertEqual(c._Color__color_parameters, "")
 
     def test_named_color_params(self):
         for i in range(len(NAMED_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color(NAMED_COLORS[i])
                 self.assertEqual(c.color_parameters, "")
-                self.assertEqual(c.__color_parameters, "")
+                self.assertEqual(c._Color__color_parameters, "")
 
     def test_transparent_params(self):
         for i in range(len(TRANSPARENT_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color(TRANSPARENT_COLORS[i])
                 self.assertEqual(c.color_parameters, "")
-                self.assertEqual(c.__color_parameters, "")
+                self.assertEqual(c._Color__color_parameters, "")
 
     def test_rgb_params(self):
         rgb_colors = [*MODERN_RGB_COLORS, *INVALID_MODERN_RGB_COLORS]
@@ -223,7 +223,7 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color("rgb" + rgb_colors[i])
                 self.assertEqual(c.color_parameters, rgb_colors[i][1:-1])
-                self.assertEqual(c.__color_parameters, rgb_colors[i][1:-1])
+                self.assertEqual(c._Color__color_parameters, rgb_colors[i][1:-1])
 
     def test_legacy_rgb_params(self):
         rgb_colors = [*LEGACY_RGB_COLORS, *INVALID_LEGACY_RGB_COLORS]
@@ -232,7 +232,7 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color("rgb" + rgb_colors[i])
                 self.assertEqual(c.color_parameters, rgb_colors[i][1:-1])
-                self.assertEqual(c.__color_parameters, rgb_colors[i][1:-1])
+                self.assertEqual(c._Color__color_parameters, rgb_colors[i][1:-1])
 
     def test_rgba_params(self):
         rgb_colors = [*MODERN_RGB_COLORS, *INVALID_MODERN_RGB_COLORS]
@@ -241,7 +241,7 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color("rgba" + rgb_colors[i])
                 self.assertEqual(c.color_parameters, rgb_colors[i][1:-1])
-                self.assertEqual(c.__color_parameters, rgb_colors[i][1:-1])
+                self.assertEqual(c._Color__color_parameters, rgb_colors[i][1:-1])
 
     def test_legacy_rgba_params(self):
         rgb_colors = [*LEGACY_RGB_COLORS, *INVALID_LEGACY_RGB_COLORS]
@@ -250,7 +250,7 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color("rgba" + rgb_colors[i])
                 self.assertEqual(c.color_parameters, rgb_colors[i][1:-1])
-                self.assertEqual(c.__color_parameters, rgb_colors[i][1:-1])
+                self.assertEqual(c._Color__color_parameters, rgb_colors[i][1:-1])
 
     def test_unknown_params(self):
         param_key = ["", "", "", "", "print(42)", "", ""]
@@ -259,7 +259,7 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color(INVALID_COLORS[i])
                 self.assertEqual(c.color_parameters, param_key[i])
-                self.assertEqual(c.__color_parameters, param_key[i])
+                self.assertEqual(c._Color__color_parameters, param_key[i])
 
     def test_hex_color_func(self):
         hex_colors = [*HEX_COLORS, *INVALID_HEX_COLORS]
@@ -268,21 +268,21 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color(hex_colors[i])
                 self.assertEqual(c.is_function, False)
-                self.assertEqual(c.__is_function, False)
+                self.assertEqual(c._Color__is_function, False)
 
     def test_named_color_func(self):
         for i in range(len(NAMED_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color(NAMED_COLORS[i])
                 self.assertEqual(c.is_function, False)
-                self.assertEqual(c.__is_function, False)
+                self.assertEqual(c._Color__is_function, False)
 
     def test_transparent_func(self):
         for i in range(len(TRANSPARENT_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color(TRANSPARENT_COLORS[i])
                 self.assertEqual(c.is_function, False)
-                self.assertEqual(c.__is_function, False)
+                self.assertEqual(c._Color__is_function, False)
 
     def test_rgb_func(self):
         rgb_colors = [*MODERN_RGB_COLORS, *INVALID_MODERN_RGB_COLORS]
@@ -291,7 +291,7 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color("rgb" + rgb_colors[i])
                 self.assertEqual(c.is_function, True)
-                self.assertEqual(c.__is_function, True)
+                self.assertEqual(c._Color__is_function, True)
 
     def test_legacy_rgb_func(self):
         rgb_colors = [*LEGACY_RGB_COLORS, *INVALID_LEGACY_RGB_COLORS]
@@ -300,7 +300,7 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color("rgb" + rgb_colors[i])
                 self.assertEqual(c.is_function, True)
-                self.assertEqual(c.__is_function, True)
+                self.assertEqual(c._Color__is_function, True)
 
     def test_rgba_func(self):
         rgb_colors = [*MODERN_RGB_COLORS, *INVALID_MODERN_RGB_COLORS]
@@ -309,7 +309,7 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color("rgba" + rgb_colors[i])
                 self.assertEqual(c.is_function, True)
-                self.assertEqual(c.__is_function, True)
+                self.assertEqual(c._Color__is_function, True)
 
     def test_legacy_rgba_func(self):
         rgb_colors = [*LEGACY_RGB_COLORS, *INVALID_LEGACY_RGB_COLORS]
@@ -318,7 +318,7 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color("rgba" + rgb_colors[i])
                 self.assertEqual(c.is_function, True)
-                self.assertEqual(c.__is_function, True)
+                self.assertEqual(c._Color__is_function, True)
 
     def test_unknown_func(self):
         func_key = [False, False, False, False, True, False, False]
@@ -327,93 +327,93 @@ class TestColorClass(unittest.TestCase):
             with self.subTest(i=i):
                 c = Color.Color(INVALID_COLORS[i])
                 self.assertEqual(c.is_function, func_key[i])
-                self.assertEqual(c.__is_function, func_key[i])
+                self.assertEqual(c._Color__is_function, func_key[i])
 
     def test_hex_color_valid(self):
         for i in range(len(HEX_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color(HEX_COLORS[i])
                 self.assertEqual(c.is_valid, True)
-                self.assertEqual(c.__is_valid, True)
+                self.assertEqual(c._Color__is_valid, True)
 
         for i in range(len(INVALID_HEX_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color(INVALID_HEX_COLORS[i])
                 self.assertEqual(c.is_valid, False)
-                self.assertEqual(c.__is_valid, False)
+                self.assertEqual(c._Color__is_valid, False)
 
     def test_named_color_valid(self):
         for i in range(len(NAMED_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color(NAMED_COLORS[i])
                 self.assertEqual(c.is_valid, True)
-                self.assertEqual(c.__is_valid, True)
+                self.assertEqual(c._Color__is_valid, True)
 
     def test_transparent_valid(self):
         for i in range(len(TRANSPARENT_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color(TRANSPARENT_COLORS[i])
                 self.assertEqual(c.is_valid, True)
-                self.assertEqual(c.__is_valid, True)
+                self.assertEqual(c._Color__is_valid, True)
 
     def test_rgb_valid(self):
         for i in range(len(MODERN_RGB_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color("rgb"+MODERN_RGB_COLORS[i])
                 self.assertEqual(c.is_valid, True)
-                self.assertEqual(c.__is_valid, True)
+                self.assertEqual(c._Color__is_valid, True)
 
         for i in range(len(INVALID_MODERN_RGB_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color("rgb"+INVALID_MODERN_RGB_COLORS[i])
                 self.assertEqual(c.is_valid, False)
-                self.assertEqual(c.__is_valid, False)
+                self.assertEqual(c._Color__is_valid, False)
 
     def test_legacy_rgb_valid(self):
         for i in range(len(LEGACY_RGB_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color("rgb"+LEGACY_RGB_COLORS[i])
                 self.assertEqual(c.is_valid, True)
-                self.assertEqual(c.__is_valid, True)
+                self.assertEqual(c._Color__is_valid, True)
 
         for i in range(len(INVALID_MODERN_RGB_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color("rgb"+INVALID_LEGACY_RGB_COLORS[i])
                 self.assertEqual(c.is_valid, False)
-                self.assertEqual(c.__is_valid, False)
+                self.assertEqual(c._Color__is_valid, False)
 
     def test_rgba_valid(self):
         for i in range(len(MODERN_RGB_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color("rgba"+MODERN_RGB_COLORS[i])
                 self.assertEqual(c.is_valid, True)
-                self.assertEqual(c.__is_valid, True)
+                self.assertEqual(c._Color__is_valid, True)
 
         for i in range(len(INVALID_MODERN_RGB_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color("rgba"+INVALID_MODERN_RGB_COLORS[i])
                 self.assertEqual(c.is_valid, False)
-                self.assertEqual(c.__is_valid, False)
+                self.assertEqual(c._Color__is_valid, False)
 
     def test_legacy_rgba_valid(self):
         for i in range(len(LEGACY_RGB_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color("rgba"+LEGACY_RGB_COLORS[i])
                 self.assertEqual(c.is_valid, True)
-                self.assertEqual(c.__is_valid, True)
+                self.assertEqual(c._Color__is_valid, True)
 
         for i in range(len(INVALID_MODERN_RGB_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color("rgba"+INVALID_LEGACY_RGB_COLORS[i])
                 self.assertEqual(c.is_valid, False)
-                self.assertEqual(c.__is_valid, False)
+                self.assertEqual(c._Color__is_valid, False)
 
     def test_unknown_valid(self):
         for i in range(len(INVALID_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color(INVALID_COLORS[i])
                 self.assertEqual(c.is_valid, False)
-                self.assertEqual(c.__is_valid, False)
+                self.assertEqual(c._Color__is_valid, False)
 
     def test_hex_color_to_hex(self):
         ...
