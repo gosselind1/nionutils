@@ -156,8 +156,8 @@ class TestColorClass(unittest.TestCase):
         for i in range(len(rgb_colors)):
             with self.subTest(i=i):
                 c = Color.Color("rgb"+rgb_colors[i])
-                self.assertEqual(c.color_type, "rgb()")
-                self.assertEqual(c._Color__color_type, "rgb()")
+                self.assertEqual(c.color_type, "rgb")
+                self.assertEqual(c._Color__color_type, "rgb")
 
     def test_legacy_rgb_type(self):
         rgb_colors = [*LEGACY_RGB_COLORS, *INVALID_LEGACY_RGB_COLORS]
@@ -165,8 +165,8 @@ class TestColorClass(unittest.TestCase):
         for i in range(len(rgb_colors)):
             with self.subTest(i=i):
                 c = Color.Color("rgb" + rgb_colors[i])
-                self.assertEqual(c.color_type, "rgb()")
-                self.assertEqual(c._Color__color_type, "rgb()")
+                self.assertEqual(c.color_type, "rgb")
+                self.assertEqual(c._Color__color_type, "rgb")
 
     def test_rgba_type(self):
         rgb_colors = [*MODERN_RGB_COLORS, *INVALID_MODERN_RGB_COLORS]
@@ -174,8 +174,8 @@ class TestColorClass(unittest.TestCase):
         for i in range(len(rgb_colors)):
             with self.subTest(i=i):
                 c = Color.Color("rgba" + rgb_colors[i])
-                self.assertEqual(c.color_type, "rgba()")
-                self.assertEqual(c._Color__color_type, "rgba()")
+                self.assertEqual(c.color_type, "rgba")
+                self.assertEqual(c._Color__color_type, "rgba")
 
     def test_legacy_rgba_type(self):
         rgb_colors = [*LEGACY_RGB_COLORS, *INVALID_LEGACY_RGB_COLORS]
@@ -183,8 +183,8 @@ class TestColorClass(unittest.TestCase):
         for i in range(len(rgb_colors)):
             with self.subTest(i=i):
                 c = Color.Color("rgba" + rgb_colors[i])
-                self.assertEqual(c.color_type, "rgba()")
-                self.assertEqual(c._Color__color_type, "rgba()")
+                self.assertEqual(c.color_type, "rgba")
+                self.assertEqual(c._Color__color_type, "rgba")
 
     def test_unknown_type(self):
         for i in range(len(INVALID_COLORS)):
