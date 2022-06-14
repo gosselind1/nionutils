@@ -10,7 +10,7 @@ INVALID_HEX_COLORS = ["#banana", "#A", "#FF", "#12345", "#1234567", "#123456789"
 
 TRANSPARENT_COLORS = ["transparent", "TRANSPARENT", "tRaNsPaReNt"]
 
-NAMED_COLORS = [*Color.Color.__NAME_TO_COLOR_TABLE.keys()]
+NAMED_COLORS = [*Color.Color._Color__NAME_TO_COLOR_TABLE.keys()]
 
 MODERN_RGB_COLORS = ["(240 248 255)", "(255 255 255)", "(0 0 0)", "(0 0 0 0)",  # ints
                      "(240.0 247.6 255.0)", "(255.0, +255.0 255.0)", "(0.0 0.0 0.0)", "(0.0 0.0 0.0 0.0)",  # floats
@@ -44,7 +44,7 @@ class TestColorClass(unittest.TestCase):
                     c = Color.Color(HEX_COLORS[i])
                 except:
                     pass
-                self.assertIsInstance(type(c), Color.Color)
+                self.assertIsInstance(c, Color.Color)
 
     def test_named_color_init(self):
         for i in range(len(NAMED_COLORS)):
@@ -54,7 +54,7 @@ class TestColorClass(unittest.TestCase):
                     c = Color.Color(NAMED_COLORS[i])
                 except:
                     pass
-                self.assertIsInstance(type(c), Color.Color)
+                self.assertIsInstance(c, Color.Color)
 
     def test_transparent_init(self):
         for i in range(len(TRANSPARENT_COLORS)):
@@ -64,7 +64,7 @@ class TestColorClass(unittest.TestCase):
                     c = Color.Color(TRANSPARENT_COLORS[i])
                 except:
                     pass
-                self.assertIsInstance(type(c), Color.Color)
+                self.assertIsInstance(c, Color.Color)
 
     def test_rgb_init(self):
         for i in range(len(MODERN_RGB_COLORS)):
@@ -74,7 +74,7 @@ class TestColorClass(unittest.TestCase):
                     c = Color.Color("rgb" + MODERN_RGB_COLORS[i])
                 except:
                     pass
-                self.assertIsInstance(type(c), Color.Color)
+                self.assertIsInstance(c, Color.Color)
 
     def test_legacy_rgb_init(self):
         for i in range(len(LEGACY_RGB_COLORS)):
@@ -84,7 +84,7 @@ class TestColorClass(unittest.TestCase):
                     c = Color.Color("rgb" + LEGACY_RGB_COLORS[i])
                 except:
                     pass
-                self.assertIsInstance(type(c), Color.Color)
+                self.assertIsInstance(c, Color.Color)
 
     def test_rgba_init(self):
         for i in range(len(MODERN_RGB_COLORS)):
@@ -94,7 +94,7 @@ class TestColorClass(unittest.TestCase):
                     c = Color.Color("rgba" + MODERN_RGB_COLORS[i])
                 except:
                     pass
-                self.assertIsInstance(type(c), Color.Color)
+                self.assertIsInstance(c, Color.Color)
 
     def test_legacy_rgba_init(self):
         for i in range(len(LEGACY_RGB_COLORS)):
@@ -104,7 +104,7 @@ class TestColorClass(unittest.TestCase):
                     c = Color.Color("rgba" + LEGACY_RGB_COLORS[i])
                 except:
                     pass
-                self.assertIsInstance(type(c), Color.Color)
+                self.assertIsInstance(c, Color.Color)
 
     def test_unknown_init(self):
         for i in range(len(INVALID_COLORS)):
@@ -114,7 +114,7 @@ class TestColorClass(unittest.TestCase):
                     c = Color.Color("rgba" + INVALID_COLORS[i])
                 except:
                     pass
-                self.assertIsInstance(type(c), Color.Color)
+                self.assertIsInstance(c, Color.Color)
 
     def test_stored_color(self):
         sampling = [HEX_COLORS[0], TRANSPARENT_COLORS[0], NAMED_COLORS[0], "rgb"+MODERN_RGB_COLORS[0],
