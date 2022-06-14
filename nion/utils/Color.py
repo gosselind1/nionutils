@@ -15,7 +15,7 @@ class Color:
 
     __SUPPORTED_FUNCTIONS = {"rgb", "rgba"}
     __SUPPORTED_TYPES = {"hex-color", "named-color", "transparent", "rgb", "rgba"}
-    __FUNCTION_PATTERN = re.compile(r".+?(.*)$")
+    __FUNCTION_PATTERN = re.compile(r".+?\(.*\)$")
     # Color list per the css spec
     __NAME_TO_COLOR_TABLE = {"aliceblue": "#f0f8ff", "antiquewhite": "#faebd7", "aqua": "#00ffff",
                              "aquamarine": "#7fffd4", "azure": "#f0ffff", "beige": "#f5f5dc", "bisque": "#ffe4c4",
@@ -121,7 +121,7 @@ class Color:
 
         color = self.stored_color
         self.__is_function = self.__FUNCTION_PATTERN.fullmatch(color) is not None
-        return self.is_function
+        return self.__is_function
 
     @property
     def color_parameters(self) -> str:
