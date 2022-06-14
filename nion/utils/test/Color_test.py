@@ -376,7 +376,7 @@ class TestColorClass(unittest.TestCase):
                 self.assertEqual(c.is_valid, True)
                 self.assertEqual(c._Color__is_valid, True)
 
-        for i in range(len(INVALID_MODERN_RGB_COLORS)):
+        for i in range(len(INVALID_LEGACY_RGB_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color("rgb"+INVALID_LEGACY_RGB_COLORS[i])
                 self.assertEqual(c.is_valid, False)
@@ -402,7 +402,7 @@ class TestColorClass(unittest.TestCase):
                 self.assertEqual(c.is_valid, True)
                 self.assertEqual(c._Color__is_valid, True)
 
-        for i in range(len(INVALID_MODERN_RGB_COLORS)):
+        for i in range(len(INVALID_LEGACY_RGB_COLORS)):
             with self.subTest(i=i):
                 c = Color.Color("rgba"+INVALID_LEGACY_RGB_COLORS[i])
                 self.assertEqual(c.is_valid, False)
