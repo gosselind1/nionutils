@@ -135,7 +135,7 @@ class Color:
 
         color = self.stored_color
         if self.is_function:
-            color_parameters = color[color.index("("):-1]
+            color_parameters = color[color.index("(")+1:-1]
         else:
             color_parameters = ""
 
