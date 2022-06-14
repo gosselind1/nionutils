@@ -207,29 +207,41 @@ class Color:
         return VALIDATORS[self.color_type](self)
 
     def __validate_rgb_parameters(self) -> bool:
-        """If a color is determined the be of the rgb/rgba type, this function determines if the function parameters are
+        """If a color is determined to be of the rgb/rgba type, this function determines if the function parameters are
         valid. This should be called by __validate_function_parameters.
 
         :return: A bool of whether the rgb/rgba function signature is correct
         """
-        parameters = [parameter for parameter in self.color_parameters.split(" ") if len(parameter)]
-        len_parameters = len(parameters)
+        parameters = self.color_parameters
 
-        if len_parameters < 3:
+        if "," in parameters:
+            split_parameters = [parameter for parameter in self.__legacy_parameters_to_modern(parameters).split(" ") if len(parameter)]
+            if len(parameters.replace(" ", "").split(",")) != len(split_parameters):
+                return False
+        else:
+            split_parameters = [parameter for parameter in parameters.split(" ") if len(parameter)]
+
+        parameter_count = len(split_parameters)
+        if parameter_count < 3:
             return False
-        elif len_parameters == 3:
-            parameters += "255"
-        elif len_parameters == 5:
-            if parameters[3] == "/":
-                len_parameters -= 2
-                del parameters[3]
+        elif parameter_count == 5:
+            if split_parameters[3] == "/":
+                parameter_count -= 2
+                del split_parameters[3]
             else:
-                return False  # If the 4th argument isn't /, there's too many arguments
-        elif len_parameters >= 6:
-            return False  # Too many arguments
+                return False
+        elif parameter_count >= 6:
+            return False
 
-        is_percent = parameters[0][-1] == "%"  # check if types are synced
-        return all(is_percent == (parameter[-1] == "%") for parameter in parameters[:len_parameters])
+        is_percent = split_parameters[0][-1] == "%"  # check if types are synced
+        if not all(is_percent == (parameter[-1] == "%") for parameter in split_parameters[:parameter_count]):
+            return False
+
+        try:
+            tuple(map(Color.__rgb_color_value_to_eight_bit, split_parameters))  # cast to tuple to execute the generator
+            return True
+        except ValueError:
+            return False
 
     def to_hex_color(self) -> Color:
         """Converts a given color to an equivalent or close to equivalent color in the hex-color format.
