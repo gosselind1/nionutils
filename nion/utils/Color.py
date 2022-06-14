@@ -212,7 +212,7 @@ class Color:
 
         :return: A bool of whether the rgb/rgba function signature is correct
         """
-        parameters = [parameter for parameter in self.color_parameters if len(parameter)]
+        parameters = [parameter for parameter in self.color_parameters.split(" ") if len(parameter)]
         len_parameters = len(parameters)
 
         if len_parameters < 3:
