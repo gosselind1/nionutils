@@ -96,7 +96,9 @@ class Color:
 
         color = self.stored_color.lower()  # css spec says all functions are treated as lowercase
 
-        if self.is_function:
+        if len(color) == 0:
+            color_type = "unknown"
+        elif self.is_function:
             color_type = color[:color.index("(")]
         elif color[0] == "#":
             color_type = "hex-color"
@@ -107,6 +109,8 @@ class Color:
         else:
             color_type = "unknown"
 
+        if color_type not in self.__SUPPORTED_TYPES:
+            color_type = "unknown"
         self.__color_type = color_type
         return self.__color_type
 
