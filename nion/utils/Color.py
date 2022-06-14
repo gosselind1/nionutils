@@ -296,7 +296,7 @@ class Color:
             parameters = self.__legacy_parameters_to_modern(parameters)
 
         split_parameters = [parameter for parameter in parameters.split(" ") if len(parameter) > 0]
-        if split_parameters[3] == "/":
+        if len(split_parameters) == 5 and split_parameters[3] == "/":
             del split_parameters[3]
         int_parameters = map(Color.__rgb_color_value_to_eight_bit, split_parameters)
         hex_parameters = map(lambda p: hex(p)[2:], int_parameters)
