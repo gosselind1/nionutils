@@ -469,7 +469,7 @@ class Color:
         :return: A string in the modern css function call, ex: "33 33 33"
         :raise ValueError: The provided syntax is invalid, ex: 33,,,33,33
         """
-        parameters = [parameter for parameter in legacy_params.split(",")]
+        parameters = [parameter for parameter in legacy_params.replace(" ", "").split(",")]
         if any(map(lambda parameter: len(parameter) == 0, parameters)):
             raise ValueError("{} in not a valid legacy-style call!".format(legacy_params))
         return " ".join(parameters)
