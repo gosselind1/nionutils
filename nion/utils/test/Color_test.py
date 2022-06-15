@@ -496,7 +496,7 @@ class TestColorClass(unittest.TestCase):
 
                     h[b] = min(h[b], 255)
                     h[b] = max(h[b], 0)
-                    h[b] = hex(h[b])[2:]
+                    h[b] = hex(h[b])[2:].upper().zfill(2)
 
                 h = "#" + "".join(h)
 
@@ -529,7 +529,7 @@ class TestColorClass(unittest.TestCase):
 
                     h[b] = min(h[b], 255)
                     h[b] = max(h[b], 0)
-                    h[b] = hex(h[b])[2:]
+                    h[b] = hex(h[b])[2:].upper().zfill(2)
 
                 h = "#" + "".join(h)
 
@@ -563,7 +563,7 @@ class TestColorClass(unittest.TestCase):
 
                     h[b] = min(h[b], 255)
                     h[b] = max(h[b], 0)
-                    h[b] = hex(h[b])[2:]
+                    h[b] = hex(h[b])[2:].upper().zfill(2)
 
                 h = "#" + "".join(h)
 
@@ -596,7 +596,7 @@ class TestColorClass(unittest.TestCase):
 
                     h[b] = min(h[b], 255)
                     h[b] = max(h[b], 0)
-                    h[b] = hex(h[b])[2:]
+                    h[b] = hex(h[b])[2:].upper().zfill(2)
 
                 h = "#" + "".join(h)
 
@@ -778,7 +778,15 @@ class TestColorClass(unittest.TestCase):
                 self.assertEqual(error, True)
 
     def test_equality(self):
-        ...
+        a_colors = ["#000000", "#FfF", "rgba(0, 255, 0)", "cyan", "transparent"]
+        b_colors = ["rgb(0 0 0 / 0)", "white", "rgb(0 255 0 / 100%)", "aqua", "#00000000"]
+        equal = [False, True, True, True, True]
+
+        for i in range(len(a_colors)):
+            with self.subTest(i=i):
+                a_c = Color.Color(a_colors[i])
+                b_c = Color.Color(b_colors[i])
+                self.assertEqual(a_c == b_c, equal[i])
 
     def test_hex_color_alpha(self):
         ...
