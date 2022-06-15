@@ -462,6 +462,31 @@ class Color:
         return color_a.stored_color.lower() == color_b.stored_color.lower()
 
     @staticmethod
+    def get_unique_color(color_iterable: typing.Iterable[typing.Union[str | Color]]) -> Color:
+        """Given an Iterable consisting of strs and or Colors, this function will return a new Color instance
+        containing a unique color from the named color list, if there are unique colors remaining in the named-color
+        table. If not, it returns a transparent color.
+
+        :param color_iterable: An iterable object consisting of strings or colors.
+        :return: A new Color Object as type named-color or transparent.
+        """
+        colors = Color.__COLOR_TO_NAME_TABLE.copy()
+
+        for color in color_iterable:
+            if isinstance(color, str):
+                color = Color(color)
+            if not color.is_valid:
+                continue
+            color = color.to_hex_color().without_alpha()
+            if str(color) in colors:
+                del colors[str(color)]
+
+        if len(colors) == 0:
+            return Color("transparent")
+        else:
+            return Color([*colors.values()][0])
+
+    @staticmethod
     def __legacy_parameters_to_modern(legacy_params: str) -> str:
         """Converts a CSS legacy style function call to the syntax of a modern css call.
 
