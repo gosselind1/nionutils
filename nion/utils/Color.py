@@ -315,10 +315,11 @@ class Color:
                      "rgb": Color.__rgb_color_expander,
                      "rgba": Color.__rgb_color_expander}
 
-        if not self.is_valid:
-            raise ValueError("Notation expansion cannot occur on invalid colors")
         if self.color_type not in EXPANDERS:
             raise NotImplementedError("Notation expansion cannot be performed on {}".format(self.color_type))
+        if not self.is_valid:
+            raise ValueError("Notation expansion cannot occur on invalid colors")
+
         return EXPANDERS[self.color_type](self)
 
     def __hex_color_expander(self) -> Color:
@@ -378,10 +379,10 @@ class Color:
                           "rgb": Color.__rgb_without_alpha,
                           "rgba": Color.__rgb_without_alpha}
 
-        if not self.is_valid:
-            raise ValueError("{} is not a valid color".format(self.stored_color))
         if self.color_type not in ALPHA_REMOVERS:
             raise NotImplementedError("Alpha removal cannot be performed on {}".format(self.color_type))
+        if not self.is_valid:
+            raise ValueError("{} is not a valid color".format(self.stored_color))
 
         return ALPHA_REMOVERS[self.color_type](self)
 
