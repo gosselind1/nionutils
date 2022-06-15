@@ -789,25 +789,148 @@ class TestColorClass(unittest.TestCase):
                 self.assertEqual(a_c == b_c, equal[i])
 
     def test_hex_color_alpha(self):
-        ...
+        for i in range(len(HEX_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color(HEX_COLORS[i]).without_alpha()
+                s = HEX_COLORS[i]
+                if len(s) == 5:
+                    s = s[:-1] + "F"
+                elif len(s) == 9:
+                    s = s[:-2] + "FF"
+                self.assertEqual(c, Color.Color(s))
+
+        for i in range(len(INVALID_HEX_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color(INVALID_HEX_COLORS[i])
+                error = False
+                try:
+                    c.without_alpha()
+                except ValueError:
+                    error = True
+                self.assertEqual(error, True)
 
     def test_named_color_alpha(self):
-        ...
+        for i in range(len(NAMED_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color(NAMED_COLORS[i])
+                self.assertEqual(c, c.without_alpha())
 
     def test_transparent_alpha(self):
-        ...
+        for i in range(len(TRANSPARENT_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color(TRANSPARENT_COLORS[i])
+                error = False
+                try:
+                    c.without_alpha()
+                except NotImplementedError:
+                    error = True
+                self.assertEqual(error, True)
 
     def test_rgb_alpha(self):
-        ...
+        for i in range(len(MODERN_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgb"+MODERN_RGB_COLORS[i]).without_alpha()
+                s = [p for p in MODERN_RGB_COLORS[i][1:-1].split(" ") if len(p)]
+                if len(s) == 4 or len(s) == 5:
+                    if s[-1][-1] == "%":
+                        s[-1] = "100%"
+                    else:
+                        s[-1] = "255"
+                s = "rgb(" + " ".join(s) + ")"
+
+                self.assertEqual(c, Color.Color(s))
+
+        for i in range(len(INVALID_MODERN_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgb"+INVALID_MODERN_RGB_COLORS[i])
+                error = False
+                try:
+                    c.without_alpha()
+                except ValueError:
+                    error = True
+                self.assertEqual(error, True)
 
     def test_legacy_rgb_alpha(self):
-        ...
+        for i in range(len(LEGACY_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgb"+LEGACY_RGB_COLORS[i]).without_alpha()
+                s = LEGACY_RGB_COLORS[i][1:-1].replace(" ", "")
+                s = [p for p in s.split(",") if len(p)]
+                if len(s) == 4:
+                    if s[-1][-1] == "%":
+                        s[-1] = "100%"
+                    else:
+                        s[-1] = "255"
+                s = "rgb(" + ", ".join(s) + ")"
+
+                self.assertEqual(c, Color.Color(s))
+
+        for i in range(len(INVALID_LEGACY_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgb"+INVALID_LEGACY_RGB_COLORS[i])
+                error = False
+                try:
+                    c.without_alpha()
+                except ValueError:
+                    error = True
+                self.assertEqual(error, True)
 
     def test_rgba_alpha(self):
-        ...
+        for i in range(len(MODERN_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgba"+MODERN_RGB_COLORS[i]).without_alpha()
+                s = [p for p in MODERN_RGB_COLORS[i][1:-1].split(" ") if len(p)]
+                if len(s) == 4 or len(s) == 5:
+                    if s[-1][-1] == "%":
+                        s[-1] = "100%"
+                    else:
+                        s[-1] = "255"
+                s = "rgba(" + " ".join(s) + ")"
+
+                self.assertEqual(c, Color.Color(s))
+
+        for i in range(len(INVALID_MODERN_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgba"+INVALID_MODERN_RGB_COLORS[i])
+                error = False
+                try:
+                    c.without_alpha()
+                except ValueError:
+                    error = True
+                self.assertEqual(error, True)
 
     def test_legacy_rgba_alpha(self):
-        ...
+        for i in range(len(LEGACY_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgba"+LEGACY_RGB_COLORS[i]).without_alpha()
+                s = LEGACY_RGB_COLORS[i][1:-1].replace(" ", "")
+                s = [p for p in s.split(",") if len(p)]
+                if len(s) == 4:
+                    if s[-1][-1] == "%":
+                        s[-1] = "100%"
+                    else:
+                        s[-1] = "255"
+                s = "rgba(" + ", ".join(s) + ")"
+
+                self.assertEqual(c, Color.Color(s))
+
+        for i in range(len(INVALID_LEGACY_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgba"+INVALID_LEGACY_RGB_COLORS[i])
+                error = False
+                try:
+                    c.without_alpha()
+                except ValueError:
+                    error = True
+                self.assertEqual(error, True)
 
     def test_unknown_alpha(self):
-        ...
+        for i in range(len(INVALID_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color(INVALID_COLORS[i])
+                error = False
+                try:
+                    c.without_alpha()
+                except NotImplementedError:
+                    error = True
+                self.assertEqual(error, True)
