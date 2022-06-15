@@ -393,7 +393,7 @@ class Color:
         :return: A new color based on the calling color, without alpha.
         """
         color = self.stored_color
-        if len(color) == 5:
+        if len(color) == 4:
             color = color[:-1] + "F"
         elif len(color) == 9:
             color = color[:-2] + "FF"
