@@ -625,27 +625,159 @@ class TestColorClass(unittest.TestCase):
                     self.assertEqual(error, True)
 
     def test_hex_color_expand(self):
-        ...
+        for i in range(len(HEX_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color(HEX_COLORS[i])
+                c = c.to_expanded_notation()
+                e = HEX_COLORS[i][1:]
+                if len(e) == 3:
+                    e = e + "F"
+                if len(e) == 4:
+                    e = "".join(c*2 for c in e)
+                if len(e) == 6:
+                    e = e + "FF"
+                self.assertEqual(str(c), "#"+e)
+
+        for i in range(len(INVALID_HEX_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color(INVALID_HEX_COLORS[i])
+                error = False
+                try:
+                    c.to_expanded_notation()
+                except ValueError:
+                    error = True
+                self.assertEqual(error, True)
 
     def test_named_color_expand(self):
-        ...
+        for i in range(len(NAMED_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color(NAMED_COLORS[i])
+                error = False
+                try:
+                    c.to_expanded_notation()
+                except NotImplementedError:
+                    error = True
+                self.assertEqual(error, True)
 
     def test_transparent_expand(self):
-        ...
+        for i in range(len(TRANSPARENT_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color(TRANSPARENT_COLORS[i])
+                error = False
+                try:
+                    c.to_expanded_notation()
+                except NotImplementedError:
+                    error = True
+                self.assertEqual(error, True)
 
     def test_rgb_expand(self):
-        ...
+        for i in range(len(MODERN_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgb"+MODERN_RGB_COLORS[i])
+                c = c.to_expanded_notation()
+
+                e = [v for v in MODERN_RGB_COLORS[i][1:-1].split(" ") if len(v)]
+                if len(e) == 3:
+                    e.append("/")
+                    e.append("255")
+                if len(e) == 4:
+                    e.insert(3, "/")
+                e = "rgb(" + " ".join(e) + ")"
+                self.assertEqual(str(c), e)
+
+        for i in range(len(INVALID_MODERN_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgb"+INVALID_MODERN_RGB_COLORS[i])
+                error = False
+                try:
+                    c.to_expanded_notation()
+                except ValueError:
+                    error = True
+                self.assertEqual(error, True)
 
     def test_legacy_rgb_expand(self):
-        ...
+        for i in range(len(LEGACY_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgb"+LEGACY_RGB_COLORS[i])
+                c = c.to_expanded_notation()
+
+                e = LEGACY_RGB_COLORS[i][1:-1].replace(" ", "")
+                e = [v for v in e.split(",") if len(v)]
+                if len(e) == 3:
+                    e.append("255")
+                e = "rgb(" + ", ".join(e) + ")"
+                self.assertEqual(str(c), e)
+
+        for i in range(len(INVALID_LEGACY_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgb"+INVALID_LEGACY_RGB_COLORS[i])
+                error = False
+                try:
+                    c.to_expanded_notation()
+                except ValueError:
+                    error = True
+                self.assertEqual(error, True)
 
     def test_rgba_expand(self):
-        ...
+        for i in range(len(MODERN_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgba" + MODERN_RGB_COLORS[i])
+                c = c.to_expanded_notation()
+
+                e = [v for v in MODERN_RGB_COLORS[i][1:-1].split(" ") if len(v)]
+                if len(e) == 3:
+                    e.append("/")
+                    e.append("255")
+                if len(e) == 4:
+                    e.insert(3, "/")
+                e = "rgba(" + " ".join(e) + ")"
+                self.assertEqual(str(c), e)
+
+        for i in range(len(INVALID_MODERN_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgba" + INVALID_MODERN_RGB_COLORS[i])
+                error = False
+                try:
+                    c.to_expanded_notation()
+                except ValueError:
+                    error = True
+                self.assertEqual(error, True)
 
     def test_legacy_rgba_expand(self):
-        ...
+        for i in range(len(LEGACY_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgba"+LEGACY_RGB_COLORS[i])
+                c = c.to_expanded_notation()
+
+                e = LEGACY_RGB_COLORS[i][1:-1].replace(" ", "")
+                e = [v for v in e.split(",") if len(v)]
+                if len(e) == 3:
+                    e.append("255")
+                e = "rgba(" + ", ".join(e) + ")"
+                self.assertEqual(str(c), e)
+
+        for i in range(len(INVALID_LEGACY_RGB_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color("rgba"+INVALID_LEGACY_RGB_COLORS[i])
+                error = False
+                try:
+                    c.to_expanded_notation()
+                except ValueError:
+                    error = True
+                self.assertEqual(error, True)
 
     def test_unknown_expand(self):
+        for i in range(len(INVALID_COLORS)):
+            with self.subTest(i=i):
+                c = Color.Color(INVALID_COLORS[i])
+                error = False
+                try:
+                    c.to_expanded_notation()
+                except NotImplementedError:
+                    error = True
+                self.assertEqual(error, True)
+
+    def test_equality(self):
         ...
 
     def test_hex_color_alpha(self):
@@ -671,7 +803,3 @@ class TestColorClass(unittest.TestCase):
 
     def test_unknown_alpha(self):
         ...
-
-    def test_equality(self):
-        ...
-
