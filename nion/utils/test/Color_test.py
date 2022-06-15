@@ -934,3 +934,17 @@ class TestColorClass(unittest.TestCase):
                 except NotImplementedError:
                     error = True
                 self.assertEqual(error, True)
+
+    def test_unique_color(self):
+        sampling = [HEX_COLORS[0], TRANSPARENT_COLORS[0], NAMED_COLORS[0], "rgb" + MODERN_RGB_COLORS[0],
+                    "rgba" + MODERN_RGB_COLORS[0], "rgb" + LEGACY_RGB_COLORS[0], "rgba" + LEGACY_RGB_COLORS[0],
+                    INVALID_COLORS[0], INVALID_HEX_COLORS[0], INVALID_LEGACY_RGB_COLORS[0],
+                    INVALID_MODERN_RGB_COLORS[0]]
+
+        c = Color.Color.get_unique_color(sampling)
+        self.assertIsInstance(c, Color.Color)
+        self.assertEqual(str(c) in NAMED_COLORS, True)
+
+        c = Color.Color.get_unique_color(NAMED_COLORS)
+        self.assertIsInstance(c, Color.Color)
+        self.assertEqual(str(c), "transparent")
